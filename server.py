@@ -3,15 +3,19 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 # for LinksExtraction
 from LinksExtraction import device, NER_tokenizer, NER_model, RE_tokenizer, RE_model, NER, RE, post_processing
-from GPT_prompt import ask_GPT, parse_response
+from GPT_prompt import ask_GPT_link, parse_link_response, ask_GPT_definition, parse_definition_response
 
-def parse_request(request):
+def parse_request(request, type = "default"):
     string = request.get_data().decode("utf-8")
     split = string.find("<;>")
     formula = string[:split]
     prose = string[split+3:]
-    print("formula:", formula)
-    print("prose:", prose)
+    if type == "with symbol":
+        nextSplit = string.find("<;>", split+3)
+        prose = string[split+3:nextSplit]
+        symbols = string[nextSplit+3:].split("<,>")
+        print("symbols:", symbols)
+        return formula, prose, symbols
     return formula, prose
 
 def get_item_location(item, string):
@@ -32,12 +36,14 @@ def create_links():
     print("==========================NER & RE==========================")
     print("==========================New POST==========================")
     formula, prose = parse_request(request)
+    print("formula\n", formula)
+    print("\nprose\n", prose)
     entities = NER(prose, NER_tokenizer, NER_model, device)
-    print("\n\nentities\n", entities)
+    print("\nentities\n", entities)
     relations = RE(prose, entities, RE_tokenizer, RE_model, device)
-    print("\n\nrelations\n", relations)
+    print("\nrelations\n", relations)
     links_in_prose = post_processing(entities, relations)
-    print("\n\nlinks_in_prose\n", links_in_prose)
+    print("\nlinks_in_prose\n", links_in_prose)
     links = []
     for link in links_in_prose:
         term_locs = []
@@ -52,7 +58,7 @@ def create_links():
             locs = get_item_location(text, formula)
             symbol_locs = symbol_locs + locs
         links.append({"symbols": symbol_locs, "terms": term_locs})
-    print("\n\nlinks\n", links)
+    print("\nlinks\n", links)
     print("============================================================")
     return jsonify(links)
 
@@ -61,10 +67,12 @@ def create_links_GPT():
     print("============================GPT=============================")
     print("==========================New POST==========================")
     formula, prose = parse_request(request)
-    res = ask_GPT(formula, prose)
-    print("\n\nres\n", res)
-    links_text = parse_response(res)
-    print("\n\nlinks_text\n", links_text)
+    print("formula\n", formula)
+    print("\nprose\n", prose)
+    res = ask_GPT_link(formula, prose)
+    print("\nres\n", res)
+    links_text = parse_link_response(res)
+    print("\nlinks_text\n", links_text)
     links = []
     for link in links_text:
         symbol_locs = []
@@ -76,9 +84,29 @@ def create_links_GPT():
             locs = get_item_location(term, prose)
             term_locs = term_locs + locs
         links.append({"symbols": symbol_locs, "terms": term_locs})
-    print("\n\nlinks\n", links)
+    print("\nlinks\n", links)
     print("============================================================")
     return jsonify(links)
+
+@app.route("/definition", methods=["POST"])
+def create_definition():
+    print("============================GPT=============================")
+    print("==========================New POST==========================")
+    formula, prose, symbols = parse_request(request, "with symbol")
+    print("formula\n", formula)
+    print("\nprose\n", prose)
+    print("\nsymbols\n", symbols)
+    res = ask_GPT_definition(formula, prose, symbols)
+    print("\nres\n", res)
+    definitions_text = parse_definition_response(res)
+    print("\ndefinitions_text\n", definitions_text)
+    definitions = []
+    for term in definitions_text:
+        locs = get_item_location(term, prose)
+        definitions = definitions + locs
+    print("\ndefinitions\n", definitions)
+    print("============================================================")
+    return jsonify(definitions)
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
