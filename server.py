@@ -3,19 +3,19 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 # for LinksExtraction
 from LinksExtraction import device, NER_tokenizer, NER_model, RE_tokenizer, RE_model, NER, RE, post_processing
-from GPT_prompt import ask_GPT_link, parse_link_response, ask_GPT_definition, parse_definition_response
+from GPT_prompt import ask_GPT_link, parse_link_response, ask_GPT_definition, parse_definition_response, ask_GPT_symbol, parse_symbol_response
 
 def parse_request(request, type = "default"):
     string = request.get_data().decode("utf-8")
     split = string.find("<;>")
     formula = string[:split]
     prose = string[split+3:]
-    if type == "with symbol":
+    if type == "with item":
         nextSplit = string.find("<;>", split+3)
         prose = string[split+3:nextSplit]
-        symbols = string[nextSplit+3:].split("<,>")
-        print("symbols:", symbols)
-        return formula, prose, symbols
+        items = string[nextSplit+3:].split("<,>")
+        print("items:", items)
+        return formula, prose, items
     return formula, prose
 
 def get_item_location(item, string):
@@ -88,11 +88,11 @@ def create_links_GPT():
     print("============================================================")
     return jsonify(links)
 
-@app.route("/definition", methods=["POST"])
-def create_definition():
+@app.route("/definition_GPT", methods=["POST"])
+def create_definition_GPT():
     print("============================GPT=============================")
     print("==========================New POST==========================")
-    formula, prose, symbols = parse_request(request, "with symbol")
+    formula, prose, symbols = parse_request(request, "with item")
     print("formula\n", formula)
     print("\nprose\n", prose)
     print("\nsymbols\n", symbols)
@@ -107,6 +107,26 @@ def create_definition():
     print("\ndefinitions\n", definitions)
     print("============================================================")
     return jsonify(definitions)
+
+@app.route("/symbol_GPT", methods=["POST"])
+def create_symbol_GPT():
+    print("============================GPT=============================")
+    print("==========================New POST==========================")
+    formula, prose, definitions = parse_request(request, "with item")
+    print("formula\n", formula)
+    print("\nprose\n", prose)
+    print("\ndefinitions\n", definitions)
+    res = ask_GPT_symbol(formula, prose, definitions)
+    print("\nres\n", res)
+    symbols_text = parse_symbol_response(res)
+    print("\nsymbols_text\n", symbols_text)
+    symbols = []
+    for symbol in symbols_text:
+        locs = get_item_location(symbol, formula)
+        symbols = symbols + locs
+    print("\nsymbols\n", symbols)
+    print("============================================================")
+    return jsonify(symbols)
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
