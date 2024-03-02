@@ -17,6 +17,7 @@ def get_union(e1, e2): # e1 should be merged entity
         label = "PRIMARY"
     return {
         "label": label,
+        "text": e1["text"] + e2["text"], # this text may have be incorrect, please use start & end
         "start": min(e1["start"], e2["start"]),
         "end": max(e1["end"], e2["end"]),
         "contain": e1["contain"]
