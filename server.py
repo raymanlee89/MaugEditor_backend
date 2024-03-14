@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 # for LinksExtraction
 from LinksExtraction import device, NER_tokenizer, NER_model, RE_tokenizer, RE_model, NER, RE, post_processing
-from GPT_prompt import ask_GPT_link, ask_GPT_definition, ask_GPT_symbol, parse_response
+from GPT_prompt import ask_GPT_link, ask_GPT_definition, ask_GPT_symbol, parse_response, check_format
 
 def get_item_location(item, string):
     result = []
@@ -95,6 +95,8 @@ def create_links_GPT():
     print("\nconversation\n", conversation)
     res = ask_GPT_link(formula, prose, conversation)
     print("\nres\n", res)
+    if not check_format(res):
+        return jsonify({"warning": "Inappropriate feedback", "rawString": res})
     links_text = parse_response(res)
     print("\nlinks_text\n", links_text)
     links = parse_links_text(links_text, formula, prose)
@@ -118,6 +120,8 @@ def create_definition_GPT():
     print("\nconversation\n", conversation)
     res = ask_GPT_definition(formula, prose, symbols, conversation)
     print("\nres\n", res)
+    if not check_format(res):
+        return jsonify({"warning": "Inappropriate feedback", "rawString": res})
     links_text = parse_response(res)
     print("\nlinks_text\n", links_text)
     links = parse_links_text(links_text, formula, prose)
@@ -141,6 +145,8 @@ def create_symbol_GPT():
     print("\nconversation\n", conversation)
     res = ask_GPT_symbol(formula, prose, definitions, conversation)
     print("\nres\n", res)
+    if not check_format(res):
+        return jsonify({"warning": "Inappropriate feedback", "rawString": res})
     links_text = parse_response(res)
     print("\nlinks_text\n", links_text)
     links = parse_links_text(links_text, formula, prose)

@@ -52,19 +52,23 @@ def ask_GPT(messages):
 def ask_GPT_link(formula, prose, conversation):
     shots = [
         {
-            "Q": "Formula: $\\Pr(H|E) = \\frac{\\Pr(E|H)\\Pr(H)}{\\Pr(E|H)\\Pr(H) + \\Pr(E|\\text{not } H)\\Pr(\\text{not } H)}$; Prose: \"The chance evidence is real (supports a hypothesis) is the chance of a true positive among all positives (true or false)\";",
+            "Q": "Formula: $\\Pr(H|E) = \\frac{\\Pr(E|H)\\Pr(H)}{\\Pr(E|H)\\Pr(H) + \\Pr(E|\\text{not } H)\\Pr(\\text{not } H)}$; Prose: \"The chance evidence is real (supports a hypothesis) is the chance of a true positive among all positives (true or false)\"",
             "A": "$\\Pr(H|E)$: \"The chance evidence is real\"; $\\Pr(E|H)\\Pr(H)$: \"the chance of a true positive\", \"true\"; $\\Pr(E|\\text{not } H)\\Pr(\\text{not } H)$: \"false\""
         },
         {
-            "Q": "Formula: $\\cos \\theta = \\frac{<a,b>}{||a|| \cdot ||b||}$; Prose: \"The angle between two vectors is calculated by finding the inner product between the first and second vectors and dividing by the length of each then take the arc cosine.\";",
+            "Q": "Formula: $\\cos \\theta = \\frac{<a,b>}{||a|| \cdot ||b||}$; Prose: \"The angle between two vectors is calculated by finding the inner product between the first and second vectors and dividing by the length of each then take the arc cosine.\"",
             "A": "$\\theta$: \"angle\"; $a$, $b$: \"two vectors\", \"the first and second vectors\"; $<$, $>$: \"inner product\"; $||$: \"the length\"; $\\cos$: \"arc cosine\""
         },
         {
-            "Q": "Formula: $e^{ix} = \\cos(x) + i \\sin(x)$; Prose: \"Growth in a perpendicular direction over time is circular: here are the horizontal and vertical coordinates.\";",
+            "Q": "Formula: $e^{ix} = \\cos(x) + i \\sin(x)$; Prose: \"Growth in a perpendicular direction over time is circular: here are the horizontal and vertical coordinates.\"",
             "A": "$e$: \"Growth\"; $i$: \"perpendicular direction\"; $x$: \"time\"; $\\cos(x)$: \"horizontal\"; $i \sin(x)$: \"vertical\""
+        },
+        {
+            "Q": "Formula: $r_s = \\frac{2GM}{c^{2}}$; Prose: \"The Schwarzschild radius is given as, where $G$ is the gravitational constant, $M$ is the object mass, and $c$ is the speed of light.\"",
+            "A": "$r_s$: \"Schwarzschild radius\"; $G$: \"$G$\", \"the gravitational constant\"; $M$: \"$M$\", \"the object mass\"; $c$: \"$c$\", \"the speed of light\""
         }
     ]
-    target = "Formula: $" + formula + "$; Prose: \"" + prose + "\";"
+    target = "Formula: $" + formula + "$; Prose: \"" + prose + "\""
     messages = initial_prompt(target, LinkPrompt, shots)
     messages = add_conversation(messages, conversation)
     response = ask_GPT(messages)
@@ -80,19 +84,23 @@ def ask_GPT_definition(formula, prose, symbols, conversation):
     
     shots = [
         {
-            "Q": "Formula: $\\Pr(H|E) = \\frac{\\Pr(E|H)\\Pr(H)}{\\Pr(E|H)\\Pr(H) + \\Pr(E|\\text{not } H)\\Pr(\\text{not } H)}$; Prose: \"The chance evidence is real (supports a hypothesis) is the chance of a true positive among all positives (true or false)\"; Symbols: $\\Pr(E|H)$;",
+            "Q": "Formula: $\\Pr(H|E) = \\frac{\\Pr(E|H)\\Pr(H)}{\\Pr(E|H)\\Pr(H) + \\Pr(E|\\text{not } H)\\Pr(\\text{not } H)}$; Prose: \"The chance evidence is real (supports a hypothesis) is the chance of a true positive among all positives (true or false)\"; Symbols: $\\Pr(E|H)$",
             "A": "$\\Pr(E|H)$: \"The chance evidence is real\""
         },
         {
-            "Q": "Formula: $\\cos \\theta = \\frac{<a,b>}{||a|| \\cdot ||b||}$; Prose: \"The angle between two vectors is calculated by finding the inner product between the first and second vectors and dividing by the length of each then take the arc cosine.\"; Symbols: $a$, $b$;",
+            "Q": "Formula: $\\cos \\theta = \\frac{<a,b>}{||a|| \\cdot ||b||}$; Prose: \"The angle between two vectors is calculated by finding the inner product between the first and second vectors and dividing by the length of each then take the arc cosine.\"; Symbols: $a$, $b$",
             "A": "$a$, $b$: \"two vectors\", \"the first and second vectors\""
         },
         {
-            "Q": "Formula: $e^{ix} = \\cos(x) + i \\sin(x)$; Prose: \"Growth in a perpendicular direction over time is circular: here are the horizontal and vertical coordinates.\"; Symbols: $e$;",
+            "Q": "Formula: $e^{ix} = \\cos(x) + i \\sin(x)$; Prose: \"Growth in a perpendicular direction over time is circular: here are the horizontal and vertical coordinates.\"; Symbols: $e$",
             "A": "$e$: \"Growth\""
+        },
+        {
+            "Q": "Formula: $r_s = \\frac{2GM}{c^{2}}$; Prose: \"The Schwarzschild radius is given as, where $G$ is the gravitational constant, $M$ is the object mass, and $c$ is the speed of light.\"; Symbols: $G$",
+            "A": "$G$: \"$G$\", \"the gravitational constant\""
         }
     ]
-    target = "Formula: $" + formula + "$; Prose: \"" + prose + "\"; Symbols: $" + symbolsString + ";"
+    target = "Formula: $" + formula + "$; Prose: \"" + prose + "\"; Symbols: $" + symbolsString
     messages = initial_prompt(target, Sym2DefPrompt, shots)
     messages = add_conversation(messages, conversation)
     response = ask_GPT(messages)
@@ -108,19 +116,23 @@ def ask_GPT_symbol(formula, prose, definitions, conversation):
     
     shots = [
         {
-            "Q": "Formula: $\\Pr(H|E) = \\frac{\\Pr(E|H)\\Pr(H)}{\\Pr(E|H)\\Pr(H) + \\Pr(E|\\text{not } H)\\Pr(\\text{not } H)}$; Prose: \"The chance evidence is real (supports a hypothesis) is the chance of a true positive among all positives (true or false)\"; Definitions: \"the chance of a true positive\", \"true\";",
+            "Q": "Formula: $\\Pr(H|E) = \\frac{\\Pr(E|H)\\Pr(H)}{\\Pr(E|H)\\Pr(H) + \\Pr(E|\\text{not } H)\\Pr(\\text{not } H)}$; Prose: \"The chance evidence is real (supports a hypothesis) is the chance of a true positive among all positives (true or false)\"; Definitions: \"the chance of a true positive\", \"true\"",
             "A": "$\\Pr(E|H)\\Pr(H)$: \"the chance of a true positive\", \"true\""    
         },
         {
-            "Q": "Formula: $\\cos \\theta = \\frac{<a,b>}{||a|| \cdot ||b||}$; Prose: \"The angle between two vectors is calculated by finding the inner product between the first and second vectors and dividing by the length of each then take the arc cosine.\"; Definitions: \"two vectors\", \"the first and second vectors\";",
+            "Q": "Formula: $\\cos \\theta = \\frac{<a,b>}{||a|| \cdot ||b||}$; Prose: \"The angle between two vectors is calculated by finding the inner product between the first and second vectors and dividing by the length of each then take the arc cosine.\"; Definitions: \"two vectors\", \"the first and second vectors\"",
             "A": "$a$, $b$: \"two vectors\", \"the first and second vectors\""
         },
         {
-            "Q": "Formula: $\\cos \\theta = \\frac{<a,b>}{||a|| \cdot ||b||}$; Prose: \"The angle between two vectors is calculated by finding the inner product between the first and second vectors and dividing by the length of each then take the arc cosine.\"; Definitions: \"inner product\";",
+            "Q": "Formula: $\\cos \\theta = \\frac{<a,b>}{||a|| \cdot ||b||}$; Prose: \"The angle between two vectors is calculated by finding the inner product between the first and second vectors and dividing by the length of each then take the arc cosine.\"; Definitions: \"inner product\"",
             "A": "$<$, $>$: \"inner product\""
+        },
+        {
+            "Q": "Formula: $r_s = \\frac{2GM}{c^{2}}$; Prose: \"The Schwarzschild radius is given as, where $G$ is the gravitational constant, $M$ is the object mass, and $c$ is the speed of light.\"; Definitions: \"the gravitational constant\"",
+            "A": "$G$: \"the gravitational constant\""
         }
     ]
-    target = "Formula: $" + formula + "$; Prose: \"" + prose + "\"; Definitions: $" + definitionsString + ";"
+    target = "Formula: $" + formula + "$; Prose: \"" + prose + "\"; Definitions: $" + definitionsString
     messages = initial_prompt(target, LinkPrompt, shots)
     messages = add_conversation(messages, conversation)
     response = ask_GPT(messages)
@@ -136,3 +148,9 @@ def parse_response(response):
         item = {"symbols": symbols, "terms": terms}
         result.append(item)
     return result
+
+def check_format(response):
+    first_split = response.find(": ")
+    if first_split == -1:
+        return False
+    return True
