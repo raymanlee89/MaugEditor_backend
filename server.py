@@ -23,6 +23,10 @@ def parse_links_text(links_text, formula, prose):
         for symbol in link["symbols"]:
             locs = get_item_location(symbol, formula)
             symbol_locs = symbol_locs + locs
+            # Symbols in prose (formatted case)
+            locs = get_item_location("$" + symbol + "$", prose)
+            if len(locs) > 0:
+                term_locs = term_locs + locs
         for term in link["terms"]:
             locs = get_item_location(term, prose)
             term_locs = term_locs + locs
@@ -36,7 +40,6 @@ CORS(app)
 def create_links():
     print("==========================NER & RE==========================")
     print("==========================New POST==========================")
-    print("formula\n", request.json)
     content = request.json
     formula = content["formula"]
     prose = content["prose"]
@@ -85,7 +88,6 @@ def create_links():
 def create_links_GPT():
     print("============================GPT=============================")
     print("==========================New POST==========================")
-    print("formula\n", request.json)
     content = request.json
     formula = content["formula"]
     prose = content["prose"]
@@ -108,7 +110,6 @@ def create_links_GPT():
 def create_definition_GPT():
     print("============================GPT=============================")
     print("==========================New POST==========================")
-    print("formula\n", request.json)
     content = request.json
     formula = content["formula"]
     prose = content["prose"]
@@ -133,7 +134,6 @@ def create_definition_GPT():
 def create_symbol_GPT():
     print("============================GPT=============================")
     print("==========================New POST==========================")
-    print("formula\n", request.json)
     content = request.json
     formula = content["formula"]
     prose = content["prose"]

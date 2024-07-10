@@ -1,14 +1,19 @@
-def is_in_range(loc, range):
-    if range["start"] <= loc and loc <= range["end"]:
-        return True
-    return False
+# def is_in_range(loc, range):
+#     if range["start"] <= loc and loc <= range["end"]:
+#         return True
+#     return False
     
+# def is_overlapping(e1, e2):
+#     if is_in_range(e1["start"], e2) or is_in_range(e1["end"], e2):
+#         return True
+#     if is_in_range(e2["start"], e1) or is_in_range(e2["end"], e1):
+#         return True
+#     return False
+
 def is_overlapping(e1, e2):
-    if is_in_range(e1["start"], e2) or is_in_range(e1["end"], e2):
-        return True
-    if is_in_range(e2["start"], e1) or is_in_range(e2["end"], e1):
-        return True
-    return False
+    if e1["end"] <= e2["start"] or e2["end"] <= e1["start"]:
+        return False
+    return True
 
 def get_union(e1, e2): # e1 should be merged entity
     e1["contain"].append(e2["eid"])

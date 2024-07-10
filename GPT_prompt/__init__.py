@@ -62,11 +62,16 @@ def ask_GPT_link(formula, prose, conversation):
         {
             "Q": "Formula: $e^{ix} = \\cos(x) + i \\sin(x)$; Prose: \"Growth in a perpendicular direction over time is circular: here are the horizontal and vertical coordinates.\"",
             "A": "$e$: \"Growth\"; $i$: \"perpendicular direction\"; $x$: \"time\"; $\\cos(x)$: \"horizontal\"; $i \sin(x)$: \"vertical\""
-        },
-        {
-            "Q": "Formula: $r_s = \\frac{2GM}{c^{2}}$; Prose: \"The Schwarzschild radius is given as, where $G$ is the gravitational constant, $M$ is the object mass, and $c$ is the speed of light.\"",
-            "A": "$r_s$: \"Schwarzschild radius\"; $G$: \"$G$\", \"the gravitational constant\"; $M$: \"$M$\", \"the object mass\"; $c$: \"$c$\", \"the speed of light\""
         }
+        # ,
+        # {
+        #     "Q": "Formula: $r_s = \\frac{2GM}{c^{2}}$; Prose: \"The Schwarzschild radius is given as, where $G$ is the gravitational constant, $M$ is the object mass, and $c$ is the speed of light.\"",
+        #     "A": "$r_s$: \"Schwarzschild radius\"; $G$: \"$G$\", \"the gravitational constant\"; $M$: \"$M$\", \"the object mass\"; $c$: \"$c$\", \"the speed of light\""
+        # },
+        # {
+        #     "Q": "Formula: $E = h \\cdot f - \\phi$; Prose: \"$E$ represents the kinetic energy in the photoelectric effect, which is the energy possessed by the moving electrons.$h$ is the Planck constant, approximately $6.626 \times 10^{-34}$ J.s.$f$ is the frequency of the light.$\\phi$ is the work function of the material, indicating the total energy required to remove an electron from the surface.\"",
+        #     "A": "$E$: \"$E$\", \"the kinetic energy in the photoelectric effect\"; $h$: \"$h$\", \"Planck\", \"$6.626 \\times 10^{-34}$ J.s.\"; $f$: \"$f$\", \"frequency of the light\"; $\\phi$: \"$\\phi$\", \"work function\", \"total energy required to remove an electron from the surface\""
+        # }
     ]
     target = "Formula: $" + formula + "$; Prose: \"" + prose + "\""
     messages = initial_prompt(target, LinkPrompt, shots)
@@ -94,11 +99,12 @@ def ask_GPT_definition(formula, prose, symbols, conversation):
         {
             "Q": "Formula: $e^{ix} = \\cos(x) + i \\sin(x)$; Prose: \"Growth in a perpendicular direction over time is circular: here are the horizontal and vertical coordinates.\"; Symbols: $e$",
             "A": "$e$: \"Growth\""
-        },
-        {
-            "Q": "Formula: $r_s = \\frac{2GM}{c^{2}}$; Prose: \"The Schwarzschild radius is given as, where $G$ is the gravitational constant, $M$ is the object mass, and $c$ is the speed of light.\"; Symbols: $G$",
-            "A": "$G$: \"$G$\", \"the gravitational constant\""
         }
+        # ,
+        # {
+        #     "Q": "Formula: $r_s = \\frac{2GM}{c^{2}}$; Prose: \"The Schwarzschild radius is given as, where $G$ is the gravitational constant, $M$ is the object mass, and $c$ is the speed of light.\"; Symbols: $G$",
+        #     "A": "$G$: \"$G$\", \"the gravitational constant\""
+        # }
     ]
     target = "Formula: $" + formula + "$; Prose: \"" + prose + "\"; Symbols: $" + symbolsString
     messages = initial_prompt(target, Sym2DefPrompt, shots)
@@ -126,11 +132,12 @@ def ask_GPT_symbol(formula, prose, definitions, conversation):
         {
             "Q": "Formula: $\\cos \\theta = \\frac{<a,b>}{||a|| \cdot ||b||}$; Prose: \"The angle between two vectors is calculated by finding the inner product between the first and second vectors and dividing by the length of each then take the arc cosine.\"; Definitions: \"inner product\"",
             "A": "$<$, $>$: \"inner product\""
-        },
-        {
-            "Q": "Formula: $r_s = \\frac{2GM}{c^{2}}$; Prose: \"The Schwarzschild radius is given as, where $G$ is the gravitational constant, $M$ is the object mass, and $c$ is the speed of light.\"; Definitions: \"the gravitational constant\"",
-            "A": "$G$: \"the gravitational constant\""
         }
+        # ,
+        # {
+        #     "Q": "Formula: $r_s = \\frac{2GM}{c^{2}}$; Prose: \"The Schwarzschild radius is given as, where $G$ is the gravitational constant, $M$ is the object mass, and $c$ is the speed of light.\"; Definitions: \"the gravitational constant\"",
+        #     "A": "$G$: \"the gravitational constant\""
+        # }
     ]
     target = "Formula: $" + formula + "$; Prose: \"" + prose + "\"; Definitions: $" + definitionsString
     messages = initial_prompt(target, LinkPrompt, shots)
